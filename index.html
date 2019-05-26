@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Predicting Chronic Kidney Disease</title>
+	<meta name="description" content="University Project for module Decision Support Systems.">
+	<meta name="keywords" content="DSS, Weka, Machine Learning, J48, Chronic Kidney Disease, GitHub">
+
+	<!-- CSS -->
+	<style>
+		* {
+			font-family: 'Fira Sans', sans-serif;
+		}
+		.bold {
+			font-weight:bold;
+		}
+		.italic {
+			font-style: italic;
+		}
+		.oblique {
+			font-style: oblique;
+		}
+
+		html {
+			background-color: lightblue;
+		}
+
+		body {
+			width: 67%;
+			margin: auto;
+			padding: 30px;
+			background-color: azure;
+		}
+
+		.mainParagraphs {
+			width: 67%;
+			margin: auto;
+			margin-top: 10px;
+			margin-bottom: 60px;
+		}
+
+		.disclaimer {
+			font-style: italic;
+			font-size: 80%;
+		}
+		
+		h1 {
+			text-align: center;
+		}
+
+		.button {
+			margin-top: 20px;
+			margin-bottom: 20px;
+		}
+
+		footer {
+			margin: 10px;
+			text-align: center;
+		}
+
+		li {
+			display: inline-block;
+		}
+	</style>
+
+	<!-- JS -->
+	<script>
+		var sc;		// Serum Creatinine
+		var pe;		// Pedal Edema
+		var dm;		// Diabetes Mellitus
+		var hemo;	// Hemoglobin
+		var sg;		// Specific Gravity
+		var result;
+
+		// Group GET functions
+		function getSc() {
+			var checkbox = document.getElementsByName("sc");
+			if (checkbox[0].checked) {
+				sc = checkbox[0].value;
+			}
+			else if (checkbox[1].checked) {
+				sc = checkbox[1].value;
+			}
+		}
+		function getPe() {
+			var checkbox = document.getElementsByName("pe");
+			if (checkbox[0].checked) {
+				pe = checkbox[0].value;
+			}
+			else if (checkbox[1].checked) {
+				pe = checkbox[1].value;
+			}
+		}
+		function getDm() {
+			var checkbox = document.getElementsByName("dm");
+			if (checkbox[0].checked) {
+				dm = checkbox[0].value;
+			}
+			else if (checkbox[1].checked) {
+				dm = checkbox[1].value;
+			}
+		}
+		function getHemo() {
+			var checkbox = document.getElementsByName("hemo");
+			if (checkbox[0].checked) {
+				hemo = checkbox[0].value;
+			}
+			else if (checkbox[1].checked) {
+				hemo = checkbox[1].value;
+			}
+		}
+		function getSg() {
+			sg = document.getElementById("sg").value;
+		}
+
+		// Traverse the decision tree
+		function traverseTree() {
+			if (sc === "<= 1.2") {
+				if (pe === "yes") {
+					result = "ckd";
+				}
+				else if (pe === "no") {
+					if (dm === "yes") {
+						result = "ckd";
+					}
+					else if (dm === "no") {
+						if (hemo === "<= 12.9") {
+							result = "ckd";
+						}
+						else if (hemo === "> 12.9") {
+							if (sg === "1.010" || sg === "1.015") {
+								result = "ckd";
+							}
+							else if (sg === "1.005" || sg === "1.020" || sg === "1.025") {
+								result = "notckd";
+							}
+						}
+					}
+				}
+			}
+			else if (sc === "> 1.2") {
+				result = "ckd";
+			}
+			// Display results
+			if (result === "ckd") {
+				alert("The patient may be affected by Chronic Kidney Disease.")
+			}
+			else if (result === "notckd") {
+				alert("The patient is unlikely to be affected by Chronic Kidney Disease.")
+			}
+			else {
+				alert("Please answer all questions.")
+			}
+		}
+
+	</script>
+</head>
+
+<body>
+	<h1>Predicting Chronic Kidney Disease (CKD) with Machine Learning</h1>
+	<div class="mainParagraphs">
+		<p>
+		This is a demo of our project for the course "Decision Support Systems". We used the machine learning tool
+		<a href="https://www.cs.waikato.ac.nz/ml/weka/">Weka</a> to train and generate a system based on real data that
+		can help with clinical decision support, specifically with diagnosing chronic kidney disease.
+		</p><p>
+		Based on <a href="https://github.com/ev2900/Hack_HI_2015">Predicting Kidney Disease with Machine Learning</a> on GitHub.
+		</p>
+	</div>
+
+	<p class="disclaimer">
+		<strong>Disclaimer:</strong> This is a small university project made by CS students and not a real medical tool.<br>
+		If you require any medical help, please seek a professioanl opinion.
+	</p>
+
+	<h3>1) Serum creatinine levels</h3>
+	<input type="radio" name="sc" value="<= 1.2" onclick="getSc();"/>
+	<= 1.2 mg/dL
+	<br>
+	<input type="radio" name="sc" value="> 1.2" onclick="getSc();"/>
+	> 1.2 mg/dL
+
+	<h3>2) Pedal edema</h3>
+	<input type="radio" name="pe" value="yes" onclick="getPe();"/>
+	Yes
+	<br>
+	<input type="radio" name="pe" value="no" onclick="getPe();"/>
+	No
+
+	<h3>3) Diabetes mellitus</h3>
+	<input type="radio" name="dm" value="yes" onclick="getDm();"/>
+	Yes
+	<br>
+	<input type="radio" name="dm" value="no" onclick="getDm();"/>
+	No
+
+	<h3>4) Hemoglobin levels</h3>
+	<input type="radio" name="hemo" value="<= 12.9" onclick="getHemo();"/>
+	<= 12.9 g/dL
+	<br>
+	<input type="radio" name="hemo" value="> 12.9" onclick="getHemo();"/>
+	> 12.9 g/dL
+
+	<h3>5) Specific gravity</h3>
+	<select id="sg" onchange="getSg();">
+		<option value="1.005">1.005</option>
+		<option value="1.010">1.010</option>
+		<option value="1.015">1.015</option>
+		<option value="1.020">1.020</option>
+		<option value="1.025">1.025</option>
+	</select> 
+
+	<div class="button">
+		<input type="button" value="See results" onclick="traverseTree();" />
+	</div>
+
+	<footer>
+		<ul>
+			<li><a href="">View on GitHub</a> | </li>
+			<li>Made by <a href="https://github.com/danielyor">Daniel</a>
+				and <a href="https://github.com/anastasiatsga">Anastasia</a></li>
+		</ul>
+	</footer>
+</body>
+
+</html>
